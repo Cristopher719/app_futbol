@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${club.id != null} ? 'Editar Club' : 'Nuevo Club'"></title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-red: #ff416c;
+            --accent-red-dark: #c31432;
+        }
+
+        body { 
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); 
+            background-attachment: fixed;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 40px 0;
+        }
+
+        .form-card { 
+            max-width: 750px; 
+            margin: auto; 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 28px; 
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header-section {
+            background: linear-gradient(45deg, var(--accent-red-dark), var(--accent-red));
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .form-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-red);
+            margin-bottom: 0.6rem;
+        }
+
+        /* Inputs y Selects */
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: white !important;
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--accent-red);
+            box-shadow: 0 0 0 0.25rem rgba(255, 65, 108, 0.25);
+            outline: none;
+        }
+
+        /* Multiselect personalizado */
+        select[multiple] {
+            height: auto !important;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        select option {
+            background: #203a43;
+            color: white;
+            padding: 10px;
+        }
+
+        /* Botones */
+        .btn-save {
+            background: linear-gradient(45deg, var(--accent-red-dark), var(--accent-red));
+            border: none;
+            border-radius: 14px;
+            padding: 1rem 2.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(195, 20, 50, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: white;
+            border-radius: 14px;
+            padding: 1rem 2rem;
+            transition: all 0.3s;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="form-card">
+        <div class="header-section">
+            <h3 class="mb-0 fw-bold">
+                <i class="fas" th:classappend="${club.id != null} ? 'fa-edit' : 'fa-plus-circle'"></i> 
+                <span th:text="${club.id != null} ? ' EDITAR CLUB' : ' NUEVO CLUB'"></span>
+            </h3>
+        </div>
+
+        <div class="p-4 p-md-5">
+            <form action="/club/guardar" method="post" th:object="${club}">
+                <input type="hidden" th:field="*{id}"/>
+                
+                <div class="section-title text-uppercase">Información Básica</div>
+                <div class="row">
+                    <div class="col-md-8 mb-4">
+                        <label class="form-label">Nombre del Club</label>
+                        <input type="text" class="form-control" th:field="*{nombre}" placeholder="Nombre oficial del equipo" required>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <label class="form-label">Año Fundación</label>
+                        <input type="number" class="form-control" th:field="*{anioFundacion}" placeholder="1900" required>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Ciudad / Sede</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent border-end-0 border-secondary text-info"><i class="fas fa-map-marker-alt"></i></span>
+                        <input type="text" class="form-control border-start-0" th:field="*{ciudad}" placeholder="Ej: Madrid, Buenos Aires..." required>
+                    </div>
+                </div>
+
+                <div class="section-title text-uppercase mt-5">Relaciones y Plantilla</div>
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">Director Técnico</label>
+                        <select class="form-select" name="entrenadorId">
+                            <option value="">-- Seleccionar --</option>
+                            <option th:each="e : ${entrenadores}" th:value="${e.id}" th:text="${e.nombre + ' ' + e.apellido}" 
+                                    th:selected="${club.entrenador != null and club.entrenador.id == e.id}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">Asociación</label>
+                        <select class="form-select" name="asociacionId">
+                            <option value="">-- Seleccionar --</option>
+                            <option th:each="a : ${asociaciones}" th:value="${a.id}" th:text="${a.nombre}" 
+                                    th:selected="${club.asociacion != null and club.asociacion.id == a.id}"></option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-5">
+                    <label class="form-label">Competiciones Inscritas</label>
+                    <select class="form-control" name="competicionesIds" multiple size="4">
+                        <option th:each="c : ${competiciones}" th:value="${c.id}" th:text="${c.nombre}" 
+                                th:selected="${club.competiciones != null and club.competiciones.contains(c)}"></option>
+                    </select>
+                    <div class="mt-2" style="font-size: 0.75rem; color: rgba(255,255,255,0.4);">
+                        <i class="fas fa-info-circle me-1"></i> Mantén presionado <strong>Ctrl</strong> (o Cmd) para seleccionar varias.
+                    </div>
+                </div>
+
+                <div class="d-grid gap-3 d-md-flex justify-content-md-end pt-3">
+                    <a href="/clubes" class="btn btn-cancel">
+                        <i class="fas fa-arrow-left me-2"></i>Volver
+                    </a>
+                    <button type="submit" class="btn btn-save btn-primary">
+                        <i class="fas fa-check-circle me-2"></i>Confirmar y Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
