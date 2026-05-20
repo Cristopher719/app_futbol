@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏆 Competiciones</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --trophy-gold: #ffc107;
+            --trophy-glow: rgba(255, 193, 7, 0.3);
+        }
+
+        body { 
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); 
+            background-attachment: fixed;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: white;
+        }
+
+        /* Navbar Glass */
+        .navbar { 
+            background: rgba(0, 0, 0, 0.4) !important; 
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        /* Card de Competiciones */
+        .table-card { 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 24px; 
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            margin-bottom: 80px;
+        }
+
+        .header-gradient {
+            background: linear-gradient(90deg, rgba(255, 193, 7, 0.2), transparent);
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Estilos de Tabla */
+        .table { color: white; margin-bottom: 0; }
+        .table thead th { 
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--trophy-gold);
+            border: none;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            padding: 1.2rem;
+        }
+        .table td { 
+            padding: 1.2rem;
+            border-color: var(--glass-border);
+            vertical-align: middle;
+            background: transparent;
+        }
+        .table-hover tbody tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transition: 0.3s ease;
+        }
+
+        /* Badge de Premio */
+        .badge-prize {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid var(--trophy-gold);
+            color: var(--trophy-gold);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-weight: 700;
+            text-shadow: 0 0 10px var(--trophy-glow);
+        }
+
+        /* Botones de Acción */
+        .btn-action {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            border: none;
+        }
+        .btn-action:hover { transform: translateY(-3px); }
+
+        /* Botón Flotante */
+        .btn-floating { 
+            position: fixed; 
+            bottom: 30px; 
+            right: 30px; 
+            width: 60px; 
+            height: 60px; 
+            border-radius: 50%; 
+            background: linear-gradient(45deg, #ffc107, #ff9800); 
+            color: #000; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px; 
+            box-shadow: 0 8px 25px rgba(255, 193, 7, 0.4);
+            text-decoration: none;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        .btn-floating:hover {
+            transform: scale(1.1) rotate(90deg);
+            color: #000;
+        }
+
+        .date-box {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/"><i class="fas fa-futbol me-2"></i> FÚTBOL<span class="text-warning">APP</span></a>
+        <div class="d-flex gap-2">
+            <a href="/" class="btn btn-link text-light text-decoration-none btn-sm">Inicio</a>
+            <a href="/clubes" class="btn btn-outline-light btn-sm px-3">Clubes</a>
+            <a href="/asociaciones" class="btn btn-outline-light btn-sm px-3">Asociaciones</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <div class="table-card">
+        <div class="header-gradient">
+            <h4 class="mb-0 fw-bold text-white"><i class="fas fa-trophy me-2 text-warning"></i> Competiciones Activas</h4>
+            <span class="badge rounded-pill bg-warning text-dark" th:text="${#lists.size(competiciones)} + ' Eventos'"></span>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Monto Premio</th>
+                        <th>Periodo</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${competiciones.empty}">
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="fas fa-medal d-block mb-3 fa-3x opacity-20"></i>
+                            No hay competiciones registradas
+                        </td>
+                    </tr>
+                    <tr th:each="c : ${competiciones}">
+                        <td th:text="${c.id}" class="text-muted fw-light" style="font-size: 0.8rem;"></td>
+                        <td><strong th:text="${c.nombre}" class="fs-5"></strong></td>
+                        <td>
+                            <div class="badge-prize">
+                                <i class="fas fa-hand-holding-usd me-1"></i>
+                                $<span th:text="${#numbers.formatDecimal(c.montoPremio, 0, 'POINT', 0, 'COMMA')}"></span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="date-box mb-1">
+                                <i class="far fa-calendar-check text-success"></i> <span th:text="${c.fechaInicio}"></span>
+                            </div>
+                            <div class="date-box">
+                                <i class="far fa-calendar-times text-danger"></i> <span th:text="${c.fechaFin}"></span>
+                            </div>
+                        </td>
+                        <td class="text-end">
+                            <a th:href="@{/competicion/editar/{id}(id=${c.id})}" class="btn-action btn-primary me-2" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a th:href="@{/competicion/eliminar/{id}(id=${c.id})}" class="btn-action btn-danger" 
+                               onclick="return confirm('¿Eliminar esta competición?')" title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<a href="/competicion/nuevo" class="btn-floating" title="Crear Competición">
+    <i class="fas fa-plus"></i>
+</a>
+
+</body>
+</html>
